@@ -46,7 +46,7 @@
 .box-5 {
     width: auto;
     height: auto;
-    padding: 15px 40px;
+    padding: 10px 10px;
     background-color: rgb(255, 255, 255) ;
     font-weight: 800;
 }
@@ -54,7 +54,7 @@
 .box-6 {
     width: auto;
     height: auto;
-    padding: 15px 40px;
+    padding: 10px 10px;
     background-color: #ffffff;
     margin: 10px;
     border-radius: 10px;
@@ -82,7 +82,7 @@
 
 .product-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 10px 20px rgba(206, 235, 195, 0.1);
+    box-shadow: 0 10px 10px rgba(206, 235, 195, 0.1);
 }
 
 .product-card img {
@@ -102,11 +102,12 @@
 }
 
 .box-7 {
-    margin-left: 50px;
+    margin-left: 10px;
     font-weight: 800;
 }
 
 .kol {
     color: #000000;
     text-decoration: none;
+
 }
