@@ -94,14 +94,161 @@
                 </div>
             </div>
         </section>
-        
-        <section class="products">
-            <div class="box-6">
-                <div class="box-7">Погода в Архипо-Осиповке</div>
-                <!-- Здесь можно добавить виджет погоды -->
-                <p style="text-align: center; margin-top: 15px;">Информация о погоде будет доступна в ближайшее время</p>
+        <div class="box-6">
+    <div class="box-7">Погода в Архипо-Осиповке</div>
+    <div class="weather-widget">
+        <div class="weather-header">
+            <div class="ty" id="update-time">Обновление...</div>
+        </div>
+        <div class="weather-conten">
+            <div class="current-weather">
+                <div class="weather-icon" id="weather-icon">⏳</div>
+                <div class="temperature" id="temperature">--°C</div>
+                <div class="description" id="description">Загрузка...</div>
             </div>
-        </section>
+            <div class="weather-details">
+                <div class="detail">
+                    <span class="ty">💧 Влажность:</span>
+                    <span class="value" id="humidity">--%</span>
+                </div>
+                <div class="detail">
+                    <span class="ty">💨 Ветер:</span>
+                    <span class="value" id="wind">-- м/с</span>
+                </div>
+                <div class="detail">
+                    <span class="ty">🌡️ Ощущается:</span>
+                    <span class="value" id="feels-like">--°C</span>
+                </div>
+                <div class="detail">
+                    <span class="ty">📊 Давление:</span>
+                    <span class="value" id="pressure">-- hPa</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// API ключ для WeatherAPI (бесплатный - 1 млн запросов в месяц)
+// Получите свой ключ на https://www.weatherapi.com/
+const WEATHER_API_KEY = '77efca52b31d4a65af2200641251711'; // Замените на ваш ключ
+
+async function getRealWeather() {
+    try {
+        const response = await fetch(
+            `https://api.weatherapi.com/v1/current.json?key=${WEATHER_API_KEY}&q=Arkhipo-Osipovka&lang=ru`
+        );
+        
+        if (!response.ok) {
+            throw new Error('Ошибка API');
+        }
+        
+        const data = await response.json();
+        
+        // Обновляем интерфейс
+        document.getElementById('temperature').textContent = Math.round(data.current.temp_c) + '°C';
+        document.getElementById('description').textContent = data.current.condition.text;
+        document.getElementById('humidity').textContent = data.current.humidity + '%';
+        document.getElementById('wind').textContent = (data.current.wind_kph / 3.6).toFixed(1) + ' м/с';
+        document.getElementById('feels-like').textContent = Math.round(data.current.feelslike_c) + '°C';
+        document.getElementById('pressure').textContent = data.current.pressure_mb + ' hPa';
+        
+        // Обновляем иконку
+        const iconElement = document.getElementById('weather-icon');
+        const iconCode = data.current.condition.icon;
+        if (iconCode.includes('day')) {
+            iconElement.textContent = getWeatherIcon('day', data.current.condition.code);
+        } else {
+            iconElement.textContent = getWeatherIcon('night', data.current.condition.code);
+        }
+        
+        // Обновляем время
+        const updateTime = new Date().toLocaleTimeString('ru-RU');
+        document.getElementById('update-time').textContent = 'Обновлено: ' + updateTime;
+        
+    } catch (error) {
+        console.error('Ошибка получения погоды:', error);
+        
+        // Показываем демо-данные
+        showDemoWeather();
+    }
+}
+
+function getWeatherIcon(time, code) {
+    const icons = {
+        day: {
+            1000: '☀️', // Sunny
+            1003: '⛅', // Partly cloudy
+            1006: '☁️', // Cloudy
+            1009: '🌫️', // Overcast
+            1030: '🌫️', // Mist
+            1063: '🌦️', // Patchy rain
+            1180: '🌦️', // Light rain shower
+            1183: '🌧️', // Light rain
+            1186: '🌧️', // Moderate rain
+            1192: '⛈️', // Heavy rain
+            1240: '🌦️', // Light shower
+            1273: '⛈️'  // Thunderstorm
+        },
+        night: {
+            1000: '🌙', // Clear
+            1003: '☁️', // Partly cloudy
+            1006: '☁️', // Cloudy
+            1009: '🌫️', // Overcast
+            1030: '🌫️', // Mist
+            1063: '🌧️', // Patchy rain
+            1180: '🌧️', // Light rain shower
+            1183: '🌧️', // Light rain
+            1186: '🌧️', // Moderate rain
+            1192: '⛈️', // Heavy rain
+            1240: '🌧️', // Light shower
+            1273: '⛈️'  // Thunderstorm
+        }
+    };
+    
+    return icons[time][code] || '⛅';
+}
+
+function showDemoWeather() {
+    // Демо-данные для Архипо-Осиповки
+    
+    document.getElementById('temperature').textContent = demoData.temperature + '°C';
+    document.getElementById('description').textContent = demoData.description;
+    document.getElementById('humidity').textContent = demoData.humidity + '%';
+    document.getElementById('wind').textContent = demoData.wind + ' м/с';
+    document.getElementById('feels-like').textContent = demoData.feelsLike + '°C';
+    document.getElementById('pressure').textContent = demoData.pressure + ' hPa';
+    document.getElementById('weather-icon').textContent = demoData.icon;
+    document.getElementById('update-time').textContent = 'Демо-данные';
+}
+
+// Загружаем погоду при загрузке страницы
+document.addEventListener('DOMContentLoaded', function() {
+    getRealWeather();
+    
+    // Обновляем каждые 10 минут
+    setInterval(getRealWeather, 10 * 60 * 1000);
+});
+
+// Обновляем по клику на виджет
+document.querySelector('.weather-widget').addEventListener('click', function() {
+    getRealWeather();
+});
+</script>
+<div class="box-6">
+    <div class="box-7">Где находится</div>
+    <div class="weather-widget">
+        <div class="map-container">
+    <iframe 
+        src="https://yandex.ru/map-widget/v1/?um=constructor%3A3f33feb4a0ad8159504bc48e1b0d2a8c20ac76d9b080adfb3700923546386fb9&amp;source=constructor" 
+        width="100%" 
+        height="400" 
+        frameborder="0"
+        style="border: none;">
+    </iframe>
+</div>
+
     </main>
+
 </body>
 </html>
